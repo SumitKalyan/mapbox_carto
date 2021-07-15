@@ -1,0 +1,382 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset='utf-8' />
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<title> GEOM2069 Interactive Mapping Assignment, Sumit Kalyan, S3826739 </title>
+</head>
+<body>
+
+<nav id="menu"></nav>
+<div id="map"></div>
+
+
+
+<div class='map-overlay' id='title'>
+  <h1>Wonder how many people celebrated holidays inside their homes in 2020?</h1>
+  <div id='info'>
+  
+  
+   
+    <h3>Use this interactive map to discover the reduction in pedestrian movement!</h3>
+	 <p>Click on a sensor to see the difference in the pedestrian count!</p>
+  </div>
+</div>
+
+<div id='legend' class='legend'>
+  <h3>Decrease in Pedestrain Count</h3>
+</div>
+
+
+<nav id="listing-group" class="listing-group">
+  <input type="checkbox" id="scrollZoom" checked="checked" />
+  <label for="scrollZoom">Scroll zoom</label>
+  <input type="checkbox" id="dragRotate" checked="checked" />
+  <label for="dragRotate">Drag rotate</label>
+  <input type="checkbox" id="dragPan" checked="checked" />
+  <label for="dragPan">Drag pan</label>
+  <input type="checkbox" id="doubleClickZoom" checked="checked" />
+  <label for="doubleClickZoom">Double click zoom</label>
+</nav>
+
+
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1Ijoic3VtaXRrYWx5YW4iLCJhIjoiY2tnMjMyNGpnMDUwaDJxbWx0djVvZTNtaCJ9.W6IuyRi0eHEkO0MMA79J8A'
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/sumitkalyan/ckgn7vqtk04ut19mgzshewqmu',
+});
+map.fitBounds([
+  [144.94, -37.8],
+  [145, -37.83]
+]);
+
+
+
+map.on('load', function() {
+
+
+
+  var layers = ['Easter Monday 2019', 'Easter Monday 2020', 'Good Friday 2019', 'Good Friday 2020'];
+
+  var colors = ['#de2d26', '#fc9272', '#31a354', '#a1d99b'];
+  
+
+  
+
+  for (i = 0; i < layers.length; i++) {
+    var layer = layers[i];
+    var color = colors[i];
+    var item = document.createElement('div');
+    var key = document.createElement('span');
+    key.className = 'legend-key';
+    key.style.backgroundColor = color;
+    var value = document.createElement('span');
+    value.innerHTML = layer;
+    item.appendChild(key);
+    item.appendChild(value);
+    legend.appendChild(item);
+  }
+
+
+
+  var circleRadius = [5, 10, 15, 20];
+  var pedCounts = [0, 8451, 16902, 25353];
+
+  map.addLayer({
+    'id': 'Easter Monday 2019',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://sumitkalyan.axc53f0m' // Your Mapbox Tileset Map ID
+    },
+    'source-layer': 'easter_20202020-2vp28b', // the name of your new point layer (see tileset)
+    'minzoom': 08,
+    paint: {
+
+      'circle-opacity': 1,
+      'circle-stroke-width': 0.3,
+      'circle-stroke-color': 'black',
+      'circle-color': '#de2d26',
+      'circle-radius': {
+        property: 'Count 19',
+        type: 'interval',
+        'stops': [
+          [0, 5],
+          [8451, 10],
+          [16902, 15],
+          [25353, 20],
+        ],
+      }
+    }
+  });
+
+
+
+
+  for (i = 0; i < pedCounts.length; i++) {
+    var pedCount = pedCounts[i];
+    var diameter = circleRadius[i] * 2;
+    var setmargin = 0 + ((20 - diameter) / 2);
+    var item = document.createElement('div');
+    item.className = 'legend-height';
+    var key = document.createElement('span');
+    key.className = 'legend-circle';
+    key.style.width = diameter + 'px';
+    key.style.height = diameter + 'px';
+    key.style.marginLeft = setmargin + 'px';
+    key.style.backgroundColor = 'black';
+    key.style.opacity = 0.9;
+    var value = document.createElement('span');
+    value.style.marginLeft = setmargin + 10 + 'px';
+    value.innerHTML = '> ' + pedCount + ' ';
+    value.style.backgroundColor = '';
+    item.appendChild(key);
+    item.appendChild(value);
+    legend.appendChild(item);
+  }
+
+
+
+
+  map.addLayer({
+    'id': 'Easter Monday 2020',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://sumitkalyan.axc53f0m' // Your Mapbox Tileset Map ID
+    },
+    'source-layer': 'easter_20202020-2vp28b', // the name of your new point layer (see tileset)
+    'minzoom': 08,
+    paint: {
+
+      'circle-opacity': 1,
+      'circle-stroke-width': 0.3,
+      'circle-stroke-color': 'black',
+      'circle-color': '#fc9272',
+      'circle-radius': {
+        property: 'Count 20',
+        type: 'interval',
+        'stops': [
+          [0, 5],
+          [8451, 10],
+          [16902, 15],
+          [25353, 20],
+        ],
+      }
+    }
+  });
+
+
+
+
+  map.addLayer({
+    'id': 'Good Friday 2019',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://sumitkalyan.3w1bo5om' // Your Mapbox Tileset Map ID
+    },
+    'source-layer': 'go-85hunu', // the name of your new point layer (see tileset)
+    'minzoom': 08,
+    paint: {
+
+      'circle-opacity': 1,
+      'circle-stroke-width': 0.3,
+      'circle-stroke-color': 'black',
+      'circle-color': '#31a354',
+      'circle-radius': {
+        property: 'go 19',
+        type: 'interval',
+        'stops': [
+          [0, 5],
+          [8451, 10],
+          [16902, 15],
+          [25353, 20],
+        ],
+      }
+    }
+  });
+
+
+
+
+  map.addLayer({
+    'id': 'Good Friday 2020',
+    'type': 'circle',
+    'source': {
+      type: 'vector',
+      url: 'mapbox://sumitkalyan.3w1bo5om' // Your Mapbox Tileset Map ID
+    },
+    'source-layer': 'go-85hunu', // the name of your new point layer (see tileset)
+    'minzoom': 08,
+    paint: {
+
+      'circle-opacity': 1,
+      'circle-stroke-width': 0.3,
+      'circle-stroke-color': 'black',
+      'circle-color': '#a1d99b',
+      'circle-radius': {
+        property: 'go 20',
+        type: 'interval',
+        'stops': [
+          [0, 5],
+          [8451, 10],
+          [16902, 15],
+          [25353, 20],
+        ],
+      }
+    }
+  });
+
+
+
+
+
+  map.on('click', 'Easter Monday 2020', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(e.features[0].properties.Diff + " less pedestrians than the Easter Monday in 2019 ")
+      .addTo(map);
+  });
+  // when mouse is over a point change the curse to a pointer 
+  map.on('mouseenter', 'Easter Monday 2020', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to default map pan cursor
+  map.on('mouseleave', 'Easter Monday 2020', function() {
+    map.getCanvas().style.cursor = '';
+  });
+
+
+
+
+  map.on('click', 'Easter Monday 2019', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(e.features[0].properties.Diff + " more  pedestrians than the Easter Monday in 2020 ")
+      .addTo(map);
+  });
+  // when mouse is over a point change the curse to a pointer 
+  map.on('mouseenter', 'Easter Monday 2019', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to default map pan cursor
+  map.on('mouseleave', 'Easter Monday 2019', function() {
+    map.getCanvas().style.cursor = '';
+  });
+
+
+
+
+  map.on('click', 'Good Friday 2020', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(e.features[0].properties.Diff + " less pedestrians than the Good Friday in 2019 ")
+      .addTo(map);
+  });
+  // when mouse is over a point change the curse to a pointer 
+  map.on('mouseenter', 'Good Friday 2020', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to default map pan cursor
+  map.on('mouseleave', 'Good Friday 2020', function() {
+    map.getCanvas().style.cursor = '';
+  });
+
+
+
+
+  map.on('click', 'Good Friday 2019', function(e) {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(e.features[0].properties.Diff + " more pedestrians than the Good Friday in 2020 ")
+      .addTo(map);
+  });
+  // when mouse is over a point change the curse to a pointer 
+  map.on('mouseenter', 'Good Friday 2019', function() {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  // Change it back to default map pan cursor
+  map.on('mouseleave', 'Good Friday 2019', function() {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(new mapboxgl.FullscreenControl());
+  map.addControl(
+    new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true
+    })
+  );
+
+
+
+});
+
+
+
+
+// enumerate ids of the layers
+var toggleableLayerIds = ['Easter Monday 2019', 'Easter Monday 2020', 'Good Friday 2019', 'Good Friday 2020'];
+
+// set up the corresponding toggle button for each layer
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+  var id = toggleableLayerIds[i];
+
+  var link = document.createElement('a');
+  link.href = '#';
+  link.className = 'active';
+  link.textContent = id;
+
+  link.onclick = function(e) {
+    var clickedLayer = this.textContent;
+    e.preventDefault();
+    e.stopPropagation();
+
+    var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+    // toggle layer visibility by changing the layout object's visibility property
+    if (visibility === 'visible') {
+      map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+      this.className = '';
+    } else {
+      this.className = 'active';
+      map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+    }
+  };
+
+  var layers = document.getElementById('menu');
+  layers.appendChild(link);
+}
+
+
+
+document
+  .getElementById('listing-group')
+  .addEventListener('change', function(e) {
+    var handler = e.target.id;
+    if (e.target.checked) {
+      map[handler].enable();
+    } else {
+      map[handler].disable();
+    }
+  });
+
+    
+</script>
+
+</body>
+
+</html>
